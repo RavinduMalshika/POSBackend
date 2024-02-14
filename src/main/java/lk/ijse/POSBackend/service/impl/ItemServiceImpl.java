@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityManager;
 import lk.ijse.POSBackend.dto.ItemDto;
+import lk.ijse.POSBackend.entity.CategoryEntity;
 import lk.ijse.POSBackend.entity.ItemEntity;
 import lk.ijse.POSBackend.repository.CategoryRepository;
 import lk.ijse.POSBackend.repository.ItemRepository;
 import lk.ijse.POSBackend.service.ItemService;
 
+@Service
 public class ItemServiceImpl implements ItemService {
     @Autowired
     ItemRepository itemRepository;
@@ -18,25 +22,30 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     CategoryRepository categoryRepository;
 
+    @Autowired
+    EntityManager entityManager;
+
     @Override
     public ItemEntity createItem(ItemDto itemDto) {
-        if(itemRepository.findById(itemDto.getId()).orElse(null) == null) {
-            ItemEntity itemEntity = new ItemEntity();
-            itemEntity.setId(itemDto.getId());
-            itemEntity.setName(itemDto.getName());
-            itemEntity.setCategoryEntity(categoryRepository.findById(itemDto.getCategory()).orElse(null));
+            if (itemRepository.findById(itemDto.getId()).orElse(null) == null) {
+                CategoryEntity categoryEntity = entityManager.getReference(CategoryEntity.class, itemDto.getCategory());
+                
+                ItemEntity itemEntity = new ItemEntity();
+                itemEntity.setId(itemDto.getId());
+                itemEntity.setName(itemDto.getName());
+                itemEntity.setCategoryEntity(categoryEntity);
 
-            return itemRepository.save(itemEntity);
-        } else {
-            return null;
-        }
+                return itemRepository.save(itemEntity);
+            } else {
+                return null;
+            }
     }
 
     @Override
     public ItemEntity updateItem(ItemDto itemDto, String id) {
         ItemEntity itemEntity = itemRepository.findById(id).orElse(null);
 
-        if(itemEntity != null) {
+        if (itemEntity != null) {
             itemEntity.setId(itemDto.getId());
             itemEntity.setName(itemDto.getName());
             itemEntity.setCategoryEntity(categoryRepository.findById(itemDto.getCategory()).orElse(null));
@@ -50,7 +59,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto findItemById(String id) {
         ItemEntity itemEntity = itemRepository.findById(id).orElse(null);
-        if(itemEntity != null) {
+        if (itemEntity != null) {
             ItemDto itemDto = new ItemDto();
             itemDto.setId(itemEntity.getId());
             itemDto.setName(itemEntity.getName());
@@ -72,7 +81,7 @@ public class ItemServiceImpl implements ItemService {
             itemDto.setName(itemEntity.getName());
             itemDto.setCategory(itemEntity.getCategoryEntity().getId());
             itemDtos.add(itemDto);
-        } 
+        }
 
         return itemDtos;
     }
@@ -81,7 +90,7 @@ public class ItemServiceImpl implements ItemService {
     public String deleteItem(String id) {
         ItemEntity itemEntity = itemRepository.findById(id).orElse(null);
 
-        if(itemEntity != null) {
+        if (itemEntity != null) {
             itemRepository.delete(itemEntity);
             return "Deleted Succcessfully";
         } else {
@@ -104,5 +113,5 @@ public class ItemServiceImpl implements ItemService {
             return "ITM0001";
         }
     }
-    
+
 }

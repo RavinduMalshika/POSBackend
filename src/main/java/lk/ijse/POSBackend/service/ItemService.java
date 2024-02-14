@@ -2,9 +2,12 @@ package lk.ijse.POSBackend.service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import lk.ijse.POSBackend.dto.ItemDto;
 import lk.ijse.POSBackend.entity.ItemEntity;
 
+@Service
 public interface ItemService {
     public ItemEntity createItem(ItemDto itemDto);
 

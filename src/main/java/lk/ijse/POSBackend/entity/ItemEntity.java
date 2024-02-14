@@ -2,9 +2,12 @@ package lk.ijse.POSBackend.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -25,8 +28,9 @@ public class ItemEntity {
     @Column(name = "Name", nullable = false)
     private String name;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Category", nullable = false)
+    @JsonIgnore
     private CategoryEntity categoryEntity;
 
     @OneToMany(mappedBy = "itemEntity", targetEntity = StockEntity.class, cascade =  CascadeType.ALL)

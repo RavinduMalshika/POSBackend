@@ -7,7 +7,9 @@ import lk.ijse.POSBackend.entity.EmployeeEntity;
 public interface EmployeeService {
     public EmployeeEntity createEmployee(EmployeeDto employeeDto);
 
-    public EmployeeEntity updateEmployee(EmployeeDto employeeDto, String id);
+    public EmployeeEntity updateEmployeeDetails(EmployeeDto employeeDto, String id);
+
+    public EmployeeEntity updateEmployeePassword(EmployeeDto employeeDto, String id);
     
     public EmployeeDto findEmployeeById(String id);
 

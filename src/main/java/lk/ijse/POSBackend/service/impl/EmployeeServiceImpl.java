@@ -3,16 +3,17 @@ package lk.ijse.POSBackend.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
 import lk.ijse.POSBackend.dto.EmployeeDto;
 import lk.ijse.POSBackend.entity.EmployeeEntity;
 import lk.ijse.POSBackend.entity.embedded.Address;
 import lk.ijse.POSBackend.entity.embedded.Name;
 import lk.ijse.POSBackend.repository.EmployeeRepository;
-import lk.ijse.POSBackend.security.jwt.JwtUtils;
 import lk.ijse.POSBackend.service.EmployeeService;
 
 @Service
@@ -20,8 +21,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     EmployeeRepository employeeRepository;
 
-    @Autowired
-    JwtUtils jwtUtils;
+    @Value("${app.secret}")
+    private String secret;
 
     @Override
     public EmployeeEntity createEmployee(EmployeeDto employeeDto) {
@@ -46,7 +47,28 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeEntity updateEmployee(EmployeeDto employeeDto, String id) {
+    public EmployeeEntity updateEmployeeDetails(EmployeeDto employeeDto, String id) {
+        EmployeeEntity employeeEntity = employeeRepository.findById(id).orElse(null);
+
+        if (employeeEntity != null) {
+            employeeEntity.setId(employeeDto.getId());
+            employeeEntity.setTitle(employeeDto.getTitle());
+            employeeEntity.setName(new Name(employeeDto.getFirstName(), employeeDto.getLastName()));
+            employeeEntity.setNic(employeeDto.getNic());
+            employeeEntity.setAddress(
+                    new Address(employeeDto.getAddress(), employeeDto.getCity(), employeeDto.getProvince()));
+            employeeEntity.setJobTitle(employeeDto.getJobTitle());
+            employeeEntity.setAccessLevel(employeeDto.getAccessLevel());
+            employeeEntity.setPhone(employeeDto.getPhone());
+
+            return employeeRepository.save(employeeEntity);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public EmployeeEntity updateEmployeePassword(EmployeeDto employeeDto, String id) {
         EmployeeEntity employeeEntity = employeeRepository.findById(id).orElse(null);
 
         if (employeeEntity != null) {
@@ -128,11 +150,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDto findEmployeeByToken(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
+        String email = null;
+
         if (token != null) {
-            String email = jwtUtils.getUsernameFromToken(token);
-
+            try {
+                email = Jwts.parser()
+                        .setSigningKey(secret)
+                        .parseClaimsJws(token.replace("Bearer ", ""))
+                        .getBody()
+                        .getSubject();
+            } catch (Exception e) {
+                throw e;
+            }
             EmployeeDto employeeDto = findEmployeeByEmail(email);
-
             return employeeDto;
         } else {
             return null;
@@ -170,7 +200,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Boolean verifyCredentials(String id, String password) {
         EmployeeEntity employeeEntity = employeeRepository.findById(id).orElse(null);
-        if (employeeEntity.getPassword().equals(password)) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        if (employeeEntity != null && encoder.matches(password, employeeEntity.getPassword())) {
             return true;
         } else {
             return false;

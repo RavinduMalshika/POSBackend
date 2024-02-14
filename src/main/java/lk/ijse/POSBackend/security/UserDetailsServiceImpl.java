@@ -25,6 +25,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         CustomerDto customerDto = customerService.findCustomerByEmail(username);
 
         if (customerDto != null) {
+            System.out.println(customerDto.getId());
+
             return User.builder()
                     .username(customerDto.getEmail())
                     .password(customerDto.getPassword())

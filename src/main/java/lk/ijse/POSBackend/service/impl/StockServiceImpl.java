@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import lk.ijse.POSBackend.dto.StockDto;
 import lk.ijse.POSBackend.entity.StockEntity;
@@ -11,6 +12,7 @@ import lk.ijse.POSBackend.repository.ItemRepository;
 import lk.ijse.POSBackend.repository.StockRepository;
 import lk.ijse.POSBackend.service.StockService;
 
+@Service
 public class StockServiceImpl implements StockService {
     @Autowired
     StockRepository stockRepository;

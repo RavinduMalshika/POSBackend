@@ -13,10 +13,10 @@ import lk.ijse.POSBackend.dto.EmployeeDto;
 import lk.ijse.POSBackend.entity.EmployeeEntity;
 import lk.ijse.POSBackend.service.EmployeeService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
-
-
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -27,26 +27,51 @@ public class EmployeeController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @PostMapping("/auth/employee")
+    @PostMapping("/employee")
     public ResponseEntity<EmployeeEntity> createEmployee(@RequestBody EmployeeDto employeeDto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(employeeService.createEmployee(employeeDto));
     }
 
-    @GetMapping("/auth/employee")
-    public ResponseEntity<EmployeeDto> getEmployeeById() {
-        return ResponseEntity.status(HttpStatus.OK).body(employeeService.findEmployeeById("EMP0001"));
+    @PutMapping("/employee/{id}")
+    public ResponseEntity<EmployeeEntity> updateEmployeeDetails(@PathVariable String id, @RequestBody EmployeeDto employeeDto) {
+        return ResponseEntity.ok().body(employeeService.updateEmployeeDetails(employeeDto, id));
     }
-    
-    @DeleteMapping("/auth/employee")
-    public ResponseEntity<String> deleteEmployee() {
-        return ResponseEntity.status(HttpStatus.OK).body(employeeService.deleteEmployee("EMP0001"));
+
+    @PutMapping("/employee/password/{id}")
+    public ResponseEntity<EmployeeEntity> updateEmployeePassword(@PathVariable String id, @RequestBody EmployeeDto employeeDto) {
+        return ResponseEntity.ok().body(employeeService.updateEmployeePassword(employeeDto, id));
+    }
+
+    @GetMapping("/employee/{id}")
+    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable String id) {
+        return ResponseEntity.status(HttpStatus.OK).body(employeeService.findEmployeeById(id));
+    }
+
+    @GetMapping("/employee/email/{email}")
+    public ResponseEntity<EmployeeDto> getEmployeeByEmail(@PathVariable String email) {
+        return ResponseEntity.status(HttpStatus.OK).body(employeeService.findEmployeeByEmail(email));
     }
 
     @GetMapping("/employee/token")
     public ResponseEntity<EmployeeDto> getEmployeeByToken(HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(employeeService.findEmployeeByToken(request));
+    }
+    
+    @DeleteMapping("/employee/{id}")
+    public ResponseEntity<String> deleteEmployee(@PathVariable String id) {
+        return ResponseEntity.status(HttpStatus.OK).body(employeeService.deleteEmployee(id));
+    }
+
+    @PostMapping("/employee/verify/{id}")
+    public ResponseEntity<Boolean> verifyCredentials(@PathVariable String id, @RequestBody String password) {
+        return ResponseEntity.ok().body(employeeService.verifyCredentials(id, password));
+    }
+    
+    @GetMapping("/employee/generateId")
+    public ResponseEntity<String> generateEmployeeId() {
+        return ResponseEntity.ok().body(employeeService.generateId());
     }
     
 }

@@ -4,16 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
 import lk.ijse.POSBackend.dto.CustomerDto;
 import lk.ijse.POSBackend.entity.CustomerEntity;
 import lk.ijse.POSBackend.entity.embedded.Address;
 import lk.ijse.POSBackend.entity.embedded.Name;
 import lk.ijse.POSBackend.repository.CustomerRepository;
-import lk.ijse.POSBackend.security.jwt.JwtUtils;
 import lk.ijse.POSBackend.service.CustomerService;
 
 @Service
@@ -21,8 +22,8 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     CustomerRepository customerRepository;
 
-    @Autowired
-    JwtUtils jwtUtils;
+    @Value("${app.secret}")
+    private String secret;
 
     @Override
     public CustomerEntity createCustomer(CustomerDto customerDto) {
@@ -36,7 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
                     new Address(customerDto.getAddress(), customerDto.getCity(), customerDto.getProvince()));
             customerEntity.setPhone(customerDto.getPhone());
             customerEntity.setEmail(customerDto.getEmail());
-            customerEntity.setPassword(new BCryptPasswordEncoder().encode(customerDto.getPassword()));
+            customerEntity.setPassword(customerDto.getPassword());
 
             return customerRepository.save(customerEntity);
         } else {
@@ -58,7 +59,6 @@ public class CustomerServiceImpl implements CustomerService {
             customerEntity.setPhone(customerDto.getPhone());
             customerEntity.setEmail(customerDto.getEmail());
             customerEntity.setPassword(new BCryptPasswordEncoder().encode(customerDto.getPassword()));
-
 
             return customerRepository.save(customerEntity);
         } else {
@@ -93,7 +93,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerDto findCustomerByEmail(String email) {
         List<CustomerEntity> customerEntities = customerRepository.findByEmail(email);
         CustomerEntity customerEntity;
-        if(customerEntities.size()>0) {
+        if (customerEntities.size() > 0) {
             customerEntity = customerEntities.get(0);
         } else {
             customerEntity = null;
@@ -122,11 +122,20 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDto findCustomerByToken(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
+        String email = null;
+
         if (token != null) {
-            String email = jwtUtils.getUsernameFromToken(token);
+            try {
+                email = Jwts.parser()
+                        .setSigningKey(secret)
+                        .parseClaimsJws(token.replace("Bearer ", ""))
+                        .getBody()
+                        .getSubject();
 
+            } catch (Exception e) {
+                throw e;
+            }
             CustomerDto customerDto = findCustomerByEmail(email);
-
             return customerDto;
         } else {
             return null;
@@ -150,7 +159,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerDto.setPhone(customerEntity.getPhone());
             customerDto.setEmail(customerEntity.getEmail());
             customerDto.setPassword(customerEntity.getPassword());
-            
+
             customerDtos.add(customerDto);
         }
 

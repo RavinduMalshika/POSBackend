@@ -17,7 +17,7 @@ import lk.ijse.POSBackend.service.CustomerService;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -36,6 +36,7 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
+        System.out.println(loginDto.getEmail() + " " + loginDto.getPassword());
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
         );
@@ -77,4 +78,10 @@ public class AuthController {
 
         return ResponseEntity.ok().body(token);
     }
+
+    @GetMapping("/auth/customer/generateId")
+    public ResponseEntity<String> generateCustomerId() {
+        return ResponseEntity.ok().body(customerService.generateId());
+    }
+    
 }
