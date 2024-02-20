@@ -72,16 +72,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         EmployeeEntity employeeEntity = employeeRepository.findById(id).orElse(null);
 
         if (employeeEntity != null) {
-            employeeEntity.setId(employeeDto.getId());
-            employeeEntity.setTitle(employeeDto.getTitle());
-            employeeEntity.setName(new Name(employeeDto.getFirstName(), employeeDto.getLastName()));
-            employeeEntity.setNic(employeeDto.getNic());
-            employeeEntity.setAddress(
-                    new Address(employeeDto.getAddress(), employeeDto.getCity(), employeeDto.getProvince()));
-            employeeEntity.setJobTitle(employeeDto.getJobTitle());
-            employeeEntity.setAccessLevel(employeeDto.getAccessLevel());
-            employeeEntity.setPhone(employeeDto.getPhone());
-            employeeEntity.setEmail(employeeDto.getEmail());
             employeeEntity.setPassword(new BCryptPasswordEncoder().encode(employeeDto.getPassword()));
 
             return employeeRepository.save(employeeEntity);
@@ -201,6 +191,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Boolean verifyCredentials(String id, String password) {
         EmployeeEntity employeeEntity = employeeRepository.findById(id).orElse(null);
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        System.out.println(employeeEntity.getId());
+        System.out.println(encoder.matches(password, employeeEntity.getPassword()));
 
         if (employeeEntity != null && encoder.matches(password, employeeEntity.getPassword())) {
             return true;

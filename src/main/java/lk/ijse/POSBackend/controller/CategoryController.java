@@ -30,6 +30,11 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.findAllCategories());
     }
 
+    @GetMapping("/category/{id}")
+    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable String id) {
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.findCategoryById(id));
+    }
+
     @GetMapping("/category/generateId")
     public ResponseEntity<String> generateCategoryId() {
         return ResponseEntity.ok().body(categoryService.generateId());
