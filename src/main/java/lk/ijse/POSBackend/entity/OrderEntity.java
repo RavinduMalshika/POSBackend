@@ -3,9 +3,12 @@ package lk.ijse.POSBackend.entity;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -29,7 +32,8 @@ public class OrderEntity {
     @OneToMany(mappedBy = "orderEntity", targetEntity = OrderDetailEntity.class, cascade = CascadeType.ALL)
     private List<OrderDetailEntity> orderDetailEntities;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Cust_ID", nullable = false)
+    @JsonIgnore
     private CustomerEntity customerEntity;
 }

@@ -20,4 +20,6 @@ public interface ItemService {
     public String deleteItem(String id);
 
     public String generateId();
+
+    public List<ItemDto> filterByCategory(String category);
 }

@@ -29,9 +29,6 @@ public class StockEntity {
     @Column(name = "Batch")
     private Integer batch;
 
-    @Column(name = "Price")
-    private Double price;
-
     @Column(name = "Quantity")
     private Double quantity;
 }

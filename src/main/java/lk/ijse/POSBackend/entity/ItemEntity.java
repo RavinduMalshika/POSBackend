@@ -33,6 +33,9 @@ public class ItemEntity {
     @JsonIgnore
     private CategoryEntity categoryEntity;
 
+    @Column(name = "Price")
+    private Double price;
+
     @OneToMany(mappedBy = "itemEntity", targetEntity = StockEntity.class, cascade =  CascadeType.ALL)
     private List<StockEntity> stockEntities;
 

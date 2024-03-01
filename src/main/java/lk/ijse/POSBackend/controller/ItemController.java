@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -39,6 +41,12 @@ public class ItemController {
     public ResponseEntity<String> generateItemId() {
         return ResponseEntity.ok().body(itemService.generateId());
     }
+
+    @GetMapping("auth/item/category/{category}")
+    public ResponseEntity<List<ItemDto>> filterByCategory(@PathVariable String category) {
+        return ResponseEntity.ok().body(itemService.filterByCategory(category));
+    }
+    
     
     @PostMapping("/item")
     public ResponseEntity<ItemEntity> createItem(@RequestBody ItemDto itemDto) {

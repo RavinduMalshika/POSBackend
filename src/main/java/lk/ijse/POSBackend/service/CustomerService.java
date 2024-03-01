@@ -9,7 +9,9 @@ import lk.ijse.POSBackend.entity.CustomerEntity;
 public interface CustomerService {
     public CustomerEntity createCustomer(CustomerDto customerDto);
 
-    public CustomerEntity updateCustomer(CustomerDto customerDto, String id);
+    public CustomerEntity updateCustomerDetails(CustomerDto customerDto, String id);
+
+    public CustomerEntity updateCustomerPassword(CustomerDto customerDto, String id);
     
     public CustomerDto findCustomerById(String id);
 

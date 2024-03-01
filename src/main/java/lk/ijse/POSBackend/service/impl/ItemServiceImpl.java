@@ -29,12 +29,11 @@ public class ItemServiceImpl implements ItemService {
     public ItemEntity createItem(ItemDto itemDto) {
             if (itemRepository.findById(itemDto.getId()).orElse(null) == null) {
                 CategoryEntity categoryEntity = entityManager.getReference(CategoryEntity.class, itemDto.getCategory());
-                
                 ItemEntity itemEntity = new ItemEntity();
                 itemEntity.setId(itemDto.getId());
                 itemEntity.setName(itemDto.getName());
                 itemEntity.setCategoryEntity(categoryEntity);
-
+                itemEntity.setPrice(itemDto.getPrice());
                 return itemRepository.save(itemEntity);
             } else {
                 return null;
@@ -49,7 +48,7 @@ public class ItemServiceImpl implements ItemService {
             itemEntity.setId(itemDto.getId());
             itemEntity.setName(itemDto.getName());
             itemEntity.setCategoryEntity(categoryRepository.findById(itemDto.getCategory()).orElse(null));
-
+            itemEntity.setPrice(itemDto.getPrice());
             return itemRepository.save(itemEntity);
         } else {
             return null;
@@ -64,7 +63,7 @@ public class ItemServiceImpl implements ItemService {
             itemDto.setId(itemEntity.getId());
             itemDto.setName(itemEntity.getName());
             itemDto.setCategory(itemEntity.getCategoryEntity().getId());
-
+            itemDto.setPrice(itemEntity.getPrice());
             return itemDto;
         } else {
             return null;
@@ -80,6 +79,7 @@ public class ItemServiceImpl implements ItemService {
             itemDto.setId(itemEntity.getId());
             itemDto.setName(itemEntity.getName());
             itemDto.setCategory(itemEntity.getCategoryEntity().getId());
+            itemDto.setPrice(itemEntity.getPrice());
             itemDtos.add(itemDto);
         }
 
@@ -112,6 +112,22 @@ public class ItemServiceImpl implements ItemService {
         } else {
             return "ITM0001";
         }
+    }
+
+    @Override
+    public List<ItemDto> filterByCategory(String category) {
+        CategoryEntity categoryEntity = categoryRepository.findById(category).orElse(null);
+        List<ItemDto> itemDtos = new ArrayList<>();
+        List<ItemEntity> itemEntities = itemRepository.filterByCategory(categoryEntity);
+        for (ItemEntity itemEntity : itemEntities) {
+            ItemDto itemDto = new ItemDto();
+            itemDto.setId(itemEntity.getId());
+            itemDto.setName(itemEntity.getName());
+            itemDto.setCategory(itemEntity.getCategoryEntity().getId());
+            itemDto.setPrice(itemEntity.getPrice());
+            itemDtos.add(itemDto);
+        }
+        return itemDtos;
     }
 
 }

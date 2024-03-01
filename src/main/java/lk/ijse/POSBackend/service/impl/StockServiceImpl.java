@@ -6,7 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lk.ijse.POSBackend.dto.ItemDto;
 import lk.ijse.POSBackend.dto.StockDto;
+import lk.ijse.POSBackend.entity.ItemEntity;
 import lk.ijse.POSBackend.entity.StockEntity;
 import lk.ijse.POSBackend.repository.ItemRepository;
 import lk.ijse.POSBackend.repository.StockRepository;
@@ -27,7 +29,6 @@ public class StockServiceImpl implements StockService {
             stockEntity.setId(stockDto.getId());
             stockEntity.setItemEntity(itemRepository.findById(stockDto.getItemId()).orElse(null));
             stockEntity.setBatch(stockDto.getBatch());
-            stockEntity.setPrice(stockDto.getPrice());
             stockEntity.setQuantity(stockDto.getQuantity());
             return stockRepository.save(stockEntity);
         } else {
@@ -43,7 +44,6 @@ public class StockServiceImpl implements StockService {
             stockEntity.setId(stockDto.getId());
             stockEntity.setItemEntity(itemRepository.findById(stockDto.getItemId()).orElse(null));
             stockEntity.setBatch(stockDto.getBatch());
-            stockEntity.setPrice(stockDto.getPrice());
             stockEntity.setQuantity(stockDto.getQuantity());
             return stockRepository.save(stockEntity);
         } else {
@@ -60,7 +60,6 @@ public class StockServiceImpl implements StockService {
             stockDto.setId(stockEntity.getId());
             stockDto.setItemId(stockEntity.getItemEntity().getId());
             stockDto.setBatch(stockEntity.getBatch());
-            stockDto.setPrice(stockEntity.getPrice());
             stockDto.setQuantity(stockEntity.getQuantity());
             return stockDto;
         } else {
@@ -77,7 +76,6 @@ public class StockServiceImpl implements StockService {
             stockDto.setId(stockEntity.getId());
             stockDto.setItemId(stockEntity.getItemEntity().getId());
             stockDto.setBatch(stockEntity.getBatch());
-            stockDto.setPrice(stockEntity.getPrice());
             stockDto.setQuantity(stockEntity.getQuantity());
 
             stockDtos.add(stockDto);
@@ -111,6 +109,22 @@ public class StockServiceImpl implements StockService {
         } else {
             return "STK0001";
         }
+    }
+
+    @Override
+    public List<StockDto> findByItem(String id) {
+        ItemEntity itemEntity = itemRepository.findById(id).orElse(null);
+        List<StockDto> stockDtos = new ArrayList<>();
+        List<StockEntity> stockEntities = stockRepository.findByItem(itemEntity);
+        for (StockEntity stockEntity : stockEntities) {
+            StockDto stockDto = new StockDto();
+            stockDto.setId(stockEntity.getId());
+            stockDto.setItemId(stockEntity.getItemEntity().getId());
+            stockDto.setBatch(stockEntity.getBatch());
+            stockDto.setQuantity(stockEntity.getQuantity());
+            stockDtos.add(stockDto);
+        }
+        return stockDtos;
     }
     
 }

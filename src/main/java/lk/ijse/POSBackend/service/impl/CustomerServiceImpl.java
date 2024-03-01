@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
 import lk.ijse.POSBackend.dto.CustomerDto;
+import lk.ijse.POSBackend.dto.EmployeeDto;
 import lk.ijse.POSBackend.entity.CustomerEntity;
+import lk.ijse.POSBackend.entity.EmployeeEntity;
 import lk.ijse.POSBackend.entity.embedded.Address;
 import lk.ijse.POSBackend.entity.embedded.Name;
 import lk.ijse.POSBackend.repository.CustomerRepository;
@@ -46,7 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerEntity updateCustomer(CustomerDto customerDto, String id) {
+    public CustomerEntity updateCustomerDetails(CustomerDto customerDto, String id) {
         CustomerEntity customerEntity = customerRepository.findById(id).orElse(null);
 
         if (customerEntity != null) {
@@ -57,7 +59,18 @@ public class CustomerServiceImpl implements CustomerService {
             customerEntity.setAddress(
                     new Address(customerDto.getAddress(), customerDto.getCity(), customerDto.getProvince()));
             customerEntity.setPhone(customerDto.getPhone());
-            customerEntity.setEmail(customerDto.getEmail());
+
+            return customerRepository.save(customerEntity);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public CustomerEntity updateCustomerPassword(CustomerDto customerDto, String id) {
+        CustomerEntity customerEntity = customerRepository.findById(id).orElse(null);
+
+        if (customerEntity != null) {
             customerEntity.setPassword(new BCryptPasswordEncoder().encode(customerDto.getPassword()));
 
             return customerRepository.save(customerEntity);
@@ -65,6 +78,7 @@ public class CustomerServiceImpl implements CustomerService {
             return null;
         }
     }
+
 
     @Override
     public CustomerDto findCustomerById(String id) {
@@ -197,7 +211,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Boolean verifyCredentials(String id, String password) {
         CustomerEntity customerEntity = customerRepository.findById(id).orElse(null);
-        if (customerEntity.getPassword().equals(password)) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        System.out.println(customerEntity.getId());
+        System.out.println(encoder.matches(password, customerEntity.getPassword()));
+
+        if (customerEntity != null && encoder.matches(password, customerEntity.getPassword())) {
             return true;
         } else {
             return false;

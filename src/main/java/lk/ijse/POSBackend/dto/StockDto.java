@@ -9,6 +9,5 @@ public class StockDto {
     private String id;
     private String itemId;
     private Integer batch;
-    private Double price;
     private Double quantity;
 }

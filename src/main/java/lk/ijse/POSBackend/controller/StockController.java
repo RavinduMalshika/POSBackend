@@ -34,6 +34,11 @@ public class StockController {
     public ResponseEntity<List<StockDto>> getAllStocks() {
         return ResponseEntity.ok().body(stockService.findAllStocks());
     }
+
+    @GetMapping("auth/stock/item/{id}")
+    public ResponseEntity<List<StockDto>> getStocksByItem(@PathVariable String id) {
+        return ResponseEntity.ok().body(stockService.findByItem(id));
+    }
     
     @PostMapping("/stock")
     public ResponseEntity<StockEntity> createStock(@RequestBody StockDto stockDto) {

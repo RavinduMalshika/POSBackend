@@ -63,6 +63,8 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/***").permitAll()
                         .requestMatchers("/auth/customer/generateId").permitAll()
+                        .requestMatchers("/auth/item/category/***").permitAll()
+                        .requestMatchers("/auth/stock/item/***").permitAll()
                         .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());

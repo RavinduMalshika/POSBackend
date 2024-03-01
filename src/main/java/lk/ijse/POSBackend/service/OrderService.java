@@ -2,9 +2,12 @@ package lk.ijse.POSBackend.service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import lk.ijse.POSBackend.dto.OrderDto;
 import lk.ijse.POSBackend.entity.OrderEntity;
 
+@Service
 public interface OrderService {
     public OrderEntity createOrder(OrderDto orderDto);
 

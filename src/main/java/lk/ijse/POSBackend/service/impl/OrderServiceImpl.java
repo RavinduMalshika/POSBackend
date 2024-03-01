@@ -4,19 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import lk.ijse.POSBackend.dto.OrderDto;
 import lk.ijse.POSBackend.entity.OrderEntity;
 import lk.ijse.POSBackend.repository.CustomerRepository;
+import lk.ijse.POSBackend.repository.ItemRepository;
+import lk.ijse.POSBackend.repository.OrderDetailRepository;
 import lk.ijse.POSBackend.repository.OrderRepository;
 import lk.ijse.POSBackend.service.OrderService;
 
+@Service
 public class OrderServiceImpl implements OrderService {
     @Autowired
     OrderRepository orderRepository;
 
     @Autowired
+    OrderDetailRepository orderDetailRepository;
+
+    @Autowired
     CustomerRepository customerRepository;
+
+    @Autowired
+    ItemRepository itemRepository;
 
     @Override
     public OrderEntity createOrder(OrderDto orderDto) {
@@ -65,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> findOrdersByCustomer(String id) {
         List<OrderDto> orderDtos = new ArrayList<>();
-        List<OrderEntity> orderEntities = orderRepository.findByCustomer(id);
+        List<OrderEntity> orderEntities = orderRepository.findByCustomer(customerRepository.findById(id).orElse(null));
         for (OrderEntity orderEntity : orderEntities) {
             OrderDto orderDto = new OrderDto();
             orderDto.setId(orderEntity.getId());

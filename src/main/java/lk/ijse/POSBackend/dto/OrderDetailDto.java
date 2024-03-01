@@ -8,6 +8,7 @@ import lombok.Setter;
 public class OrderDetailDto {
     private String orderId;
     private String itemId;
+    private Double price;
     private Double quantity;
     private Double discount;
 }
