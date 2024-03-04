@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lk.ijse.POSBackend.dto.CustomerDto;
 import lk.ijse.POSBackend.dto.LoginDto;
 import lk.ijse.POSBackend.security.jwt.JwtUtils;
@@ -17,8 +19,8 @@ import lk.ijse.POSBackend.service.CustomerService;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.GetMapping;
 
+@Tag(name = "Authorization", description = "Authorization APIs")
 @RestController
 @CrossOrigin(origins = "*")
 public class AuthController {
@@ -34,6 +36,11 @@ public class AuthController {
     @Autowired
     CustomerService customerService;
 
+    @Operation(
+        summary = "Login as an employee or customer",
+        description = "Generate a token if the credentails match to an employee or a customer",
+        tags = {"POST"}
+    )
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
         System.out.println(loginDto.getEmail() + " " + loginDto.getPassword());
@@ -48,6 +55,11 @@ public class AuthController {
         return ResponseEntity.ok().body(token);
     }
     
+    @Operation(
+        summary = "Register a customer",
+        description = "Creates a customer entry to the database",
+        tags = {"POST"}
+    )
     @PostMapping("/auth/signup")
     public ResponseEntity<?> signUp(@RequestBody CustomerDto customerDto) {
         if(customerService.findCustomerByEmail(customerDto.getEmail()) != null) {
@@ -79,9 +91,6 @@ public class AuthController {
         return ResponseEntity.ok().body(token);
     }
 
-    @GetMapping("/auth/customer/generateId")
-    public ResponseEntity<String> generateCustomerId() {
-        return ResponseEntity.ok().body(customerService.generateId());
-    }
+    
     
 }

@@ -65,6 +65,9 @@ public class WebSecurityConfig {
                         .requestMatchers("/auth/customer/generateId").permitAll()
                         .requestMatchers("/auth/item/category/***").permitAll()
                         .requestMatchers("/auth/stock/item/***").permitAll()
+                        .requestMatchers("/api-docs").permitAll()
+                        .requestMatchers("/api-docs/***").permitAll()
+                        .requestMatchers("/swagger-ui/***").permitAll()
                         .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());

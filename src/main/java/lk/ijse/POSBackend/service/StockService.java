@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import lk.ijse.POSBackend.dto.ItemDto;
 import lk.ijse.POSBackend.dto.StockDto;
 import lk.ijse.POSBackend.entity.StockEntity;
 

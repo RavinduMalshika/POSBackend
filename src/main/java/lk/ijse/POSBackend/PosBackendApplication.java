@@ -3,6 +3,7 @@ package lk.ijse.POSBackend;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+
 @SpringBootApplication
 public class PosBackendApplication {
 
