@@ -210,8 +210,6 @@ public class CustomerServiceImpl implements CustomerService {
     public Boolean verifyCredentials(String id, String password) {
         CustomerEntity customerEntity = customerRepository.findById(id).orElse(null);
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        System.out.println(customerEntity.getId());
-        System.out.println(encoder.matches(password, customerEntity.getPassword()));
 
         if (customerEntity != null && encoder.matches(password, customerEntity.getPassword())) {
             return true;

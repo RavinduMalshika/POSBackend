@@ -191,8 +191,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Boolean verifyCredentials(String id, String password) {
         EmployeeEntity employeeEntity = employeeRepository.findById(id).orElse(null);
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        System.out.println(employeeEntity.getId());
-        System.out.println(encoder.matches(password, employeeEntity.getPassword()));
 
         if (employeeEntity != null && encoder.matches(password, employeeEntity.getPassword())) {
             return true;

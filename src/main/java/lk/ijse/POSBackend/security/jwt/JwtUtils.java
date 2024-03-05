@@ -29,7 +29,6 @@ public class JwtUtils {
     }
 
     public String generateJwtToken(Authentication authentication) {
-        System.out.println("Generate token");
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         return Jwts.builder()

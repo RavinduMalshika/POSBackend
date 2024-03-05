@@ -43,7 +43,6 @@ public class AuthController {
     )
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
-        System.out.println(loginDto.getEmail() + " " + loginDto.getPassword());
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
         );
@@ -60,7 +59,7 @@ public class AuthController {
         description = "Creates a customer entry to the database",
         tags = {"POST"}
     )
-    @PostMapping("/auth/signup")
+    @PostMapping("/auth/register")
     public ResponseEntity<?> signUp(@RequestBody CustomerDto customerDto) {
         if(customerService.findCustomerByEmail(customerDto.getEmail()) != null) {
             return ResponseEntity.badRequest().body("Email is already in use");
